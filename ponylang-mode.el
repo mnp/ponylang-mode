@@ -91,6 +91,11 @@
   :type 'string
   :group 'ponylang)
 
+(defcustom ponylang-show-whitespace t
+  "If t, use `whitespace-mode` to show leading and trailing blanks, tabs, newlines, etc."
+  :type 'boolean
+  :group 'ponylang)
+
 (defconst ponylang-mode-syntax-table
   (let ((table (make-syntax-table)))
     ;; fontify " using ponylang-keywords
@@ -787,16 +792,18 @@ value is 0 then no banner is displayed."
        ("DEBUG" . "DarkCyan")
        ("GOTCHA" . "red")
        ("STUB" . "DarkGreen")))
-  (whitespace-mode)
-  (setq-local whitespace-style
-    '(face spaces tabs newline space-mark tab-mark newline-mark trailing))
-  ;; Make whitespace-mode and whitespace-newline-mode use “¶” for end of line char and “▷” for tab.
-  (setq-local whitespace-display-mappings
-    ;; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
-    '((space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
-       (newline-mark 10 [182 10]) ; LINE FEED,
-       (tab-mark 9 [9655 9] [92 9])))
 
+  (when ponylang-show-whitespace
+    (whitespace-mode)
+    (setq-local whitespace-style
+      '(face spaces tabs newline space-mark tab-mark newline-mark trailing))
+    ;; Make whitespace-mode and whitespace-newline-mode use “¶” for end of line char and “▷” for tab.
+    (setq-local whitespace-display-mappings
+      ; all numbers are unicode codepoint in decimal. e.g. (insert-char 182 1)
+      '((space-mark 32 [183] [46]) ; SPACE 32 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+        (newline-mark 10 [182 10]) ; LINE FEED,
+        (tab-mark 9 [9655 9] [92 9]))))
+ 
   ;; (setq-local whitespace-style '(face trailing))
   (setq-local fci-rule-column 80)
   (setq-local fci-handle-truncate-lines nil)
